@@ -4,14 +4,16 @@ package dz.opt.feteKorner.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Data
-@Table(name="Service")
+@NoArgsConstructor
+@AllArgsConstructor
 @SequenceGenerator(name = "service_id_seq",allocationSize = 1)
+@Table(name="service")
 public class Service {
     @GeneratedValue(generator = "service_id_seq",strategy = GenerationType.SEQUENCE)
     @Id
@@ -23,23 +25,22 @@ public class Service {
 
     private int dislikes;
 
-    @Column(columnDefinition = "TEXT")
-    private String descpription ;
+
 
     @JsonManagedReference(value = "serviceData")
-    @OneToMany(mappedBy = "service",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "service",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<ServiceData> serviceData ;
 
-    @JsonBackReference(value = "serviceNotice")
-    @OneToMany(mappedBy = "service",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "service",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JsonManagedReference(value = "serviceNotice")
     private List<Notice> notices ;
 
-    @JsonManagedReference(value = "serviceUser")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference(value = "serviceUser")
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @JsonManagedReference(value = "serviceSecteur")
+    @JsonBackReference(value = "serviceSecteur")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name= "secteur_id")
     private Secteur secteur;
