@@ -31,10 +31,9 @@ public class User {
     @Column(nullable = false)
     private String country;
 
-    @ElementCollection(targetClass = Role.class)
     @Enumerated(EnumType.STRING)
-    @Column(name = "roles", columnDefinition = "VARCHAR(255)")
-    private List<Role> roles;
+    @Column(name = "role", columnDefinition = "VARCHAR(255)")
+    private Role role;
 
     @JsonManagedReference(value = "serviceUser")
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)

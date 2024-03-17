@@ -10,4 +10,6 @@ public class SecteurDto {
     private int id;
     @NotBlank(message = "Le libelle est obligatoire")
     private String label;
+    @NotBlank(message = "L'emoji est obligatoire")
+    private String emoji;
 }

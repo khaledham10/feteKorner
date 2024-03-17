@@ -20,9 +20,10 @@ public class Secteur {
     @Column(nullable = false)
     private String label;
 
+    private String emoji;
+
     @JsonManagedReference(value = "serviceSecteur") // Indique le côté propriétaire
     @OneToMany(mappedBy = "secteur",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JsonBackReference(value = "serviceSecteur")
     private List<Service> services;
 
 }
