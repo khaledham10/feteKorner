@@ -1,5 +1,7 @@
 package dz.opt.feteKorner.config;
 
+import ch.qos.logback.core.spi.ErrorCodes;
+import dz.opt.feteKorner.exception.InvalidTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,7 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +27,7 @@ import java.io.IOException;
 
 @Component
 @NoArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     UserDetailsService userDetailsService;
@@ -31,8 +37,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        try {
             String jwt = parseJwt(request);
+
             if (jwt != null && jwtService.validateToken(jwt)) {
                 String username = jwtService.extractUsername(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -45,10 +51,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (Exception e) {
-            logger.error("Connexion Impossible JWT invalide", e);
-            throw new AuthenticationCredentialsNotFoundException("Connexion Impossible");
-        }
 
         filterChain.doFilter(request, response);
     }

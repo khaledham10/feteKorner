@@ -23,6 +23,8 @@ public class WebSecurityConfig {
 
     private final UserDetailsService userDetailsService;
 
+    private final ExceptionHandlingEntryPoint exceptionHandlingEntryPoint;
+
 
     @Bean
     public JwtAuthenticationFilter authenticationJwtTokenFilter() {
@@ -52,19 +54,12 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable()).cors(cors->cors.disable())
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(exceptionHandlingEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
                             auth.requestMatchers("/auth/**").permitAll()
-                                    .requestMatchers("/auth/signin").permitAll()
-                                    .requestMatchers(HttpMethod.GET,"/service/").permitAll()
-                                    .requestMatchers("/error").permitAll()
-                                    .requestMatchers("/env/**").permitAll()
-                                    .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                                     .anyRequest().authenticated();
-
                         }
-
-
                 );
 
         http.authenticationProvider(authenticationProvider());

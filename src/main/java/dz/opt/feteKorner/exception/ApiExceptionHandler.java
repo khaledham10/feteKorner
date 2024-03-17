@@ -4,15 +4,18 @@ package dz.opt.feteKorner.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class ApiExceptionHandler {
 
     @ExceptionHandler(value={MethodArgumentNotValidException.class})
@@ -27,14 +30,20 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(  apiExceptionDTO,HttpStatus.BAD_REQUEST);
     }
 
-    // Gestion des exceptions inattendue
-    @ExceptionHandler(value = {Exception.class})
-    public ResponseEntity<ApiExceptionDTO> handleUnknownException(Exception e){
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiExceptionDTO> userNotFound(BadCredentialsException e){
         log.error(e.getMessage());
-        ApiExceptionDTO apiExceptionDTO = ApiExceptionDTO.builder().message("Exception inconnue").httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-                .localDateTime(LocalDateTime.now()).build();
-        return  new ResponseEntity<>(apiExceptionDTO,HttpStatus.INTERNAL_SERVER_ERROR);
+        ApiExceptionDTO apiExceptionDTO = ApiExceptionDTO.builder().message("Email ou Mot de passe incorrect!").
+                httpStatus(HttpStatus.UNAUTHORIZED).localDateTime(LocalDateTime.now()).
+                errors(List.of()).
+                build();
+
+        return new ResponseEntity<>(  apiExceptionDTO,HttpStatus.UNAUTHORIZED);
     }
+
+
+
+
 
 
 

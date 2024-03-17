@@ -1,5 +1,7 @@
 package dz.opt.feteKorner.config;
 
+import dz.opt.feteKorner.exception.InvalidTokenException;
+import dz.opt.feteKorner.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -7,6 +9,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -23,22 +26,23 @@ public class JwtService {
     private String jwtSecret;
 
     @Value("${application.security.jwt.expiration}")
-    private int jwtExpirationMs;
+    private long jwtExpirationMs;
 
 
 
 
 
     public String buildToken(
-            UserDetails userDetails
+            Authentication authentication
     ) {
-        List<String> authorities = userDetails.getAuthorities().stream()
+        User user = (User) authentication.getPrincipal();
+        List<String> authorities = user.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
         return Jwts
                 .builder()
                 .claim("authorities", authorities.get(0))
-                .setSubject(userDetails.getUsername())
+                .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -74,7 +78,7 @@ public class JwtService {
                     .parseClaimsJws(token);
             return true;
         } catch (Exception ex) {
-            throw new AuthenticationCredentialsNotFoundException("Veuillez renouveller votre connexion",ex.fillInStackTrace());
+            return false;
         }
     }
 
