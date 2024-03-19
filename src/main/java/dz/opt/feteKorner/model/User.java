@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import dz.opt.feteKorner.util.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SequenceGenerator(name = "user_id_seq",allocationSize = 1)
+@Builder
 @Table(name="Users")
 public class User  implements UserDetails {
 
@@ -31,11 +33,13 @@ public class User  implements UserDetails {
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
-    private String city;
-    @Column(nullable = false)
-    private String country;
-    @Column(nullable = false)
     private String phone;
+    @Column
+    private String verificationCode;
+
+    @Column
+    private boolean isAccountValidated;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role", columnDefinition = "VARCHAR(255)")
     private Role role;

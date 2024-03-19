@@ -5,6 +5,8 @@ import dz.opt.feteKorner.dto.SecteurDto;
 import dz.opt.feteKorner.service.intrf.SecteurService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,9 +17,11 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RequestMapping(value = "/secteur")
 @RequiredArgsConstructor
-public class IsecteurController implements SecteurController {
+public class SecteurControllerImpl implements SecteurController {
 
     private final SecteurService secteurService;
+
+    private final MailSender mailSender;
 
     @Override
     public SecteurDto createSecteur(@Valid SecteurDto secteurDto){

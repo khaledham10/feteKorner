@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class IsecteurService implements SecteurService {
+public class SecteurServiceImpl implements SecteurService {
 
     private final SecteurRepository secteurRepo;
     private final ModelMapper modelMapper;
