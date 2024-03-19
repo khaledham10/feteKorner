@@ -16,7 +16,6 @@ public interface AuthController {
     @PostMapping("/signup")
     void signUp(@Valid @RequestBody SignUpDTO signUpDTO);
 
-    @GetMapping("/verification")
-    @ResponseBody
-    String verification(@RequestParam String code);
 }
+
+

@@ -19,14 +19,15 @@ public class ProcessMailImpl implements ProcessMail {
 
 
     @Override
-    public void SendVerificationMail(String email,String verificationCode) {
-        String validationLink= this.appUrl+"/api/auth/verification?code="+verificationCode;
-        String body= """
-                        Bonjour
-                        Veuillez valider votreinscription FETEKORNER  
+    public void SendVerificationMail(String email,String verificationCode,String pseudo) {
+        String validationLink= this.appUrl+"/api/views/auth/verification?code="+verificationCode;
+        String body= "Bonjour  "+ pseudo + "\n"+
+                      """  
+                                     
+                        Veuillez valider votre inscription FETEKORNER  en cliquant sur le lien ci-dessous
                         """ +
                         validationLink
-                        +"""
+                      +"""
                      
                         L'équipe FETEKORNER
                         

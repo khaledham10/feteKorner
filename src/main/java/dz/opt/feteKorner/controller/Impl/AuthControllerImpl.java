@@ -31,9 +31,5 @@ public class AuthControllerImpl implements AuthController {
 
     }
 
-    @Override
-    public String verification(String code) {
-        this.authService.verification(code);
-        return "";
-    }
+
 }

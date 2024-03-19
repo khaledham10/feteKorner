@@ -11,5 +11,5 @@ public interface ViewController {
 
 
 
-    @GetMapping("/verification")
+    @GetMapping("/auth/verification")
     ModelAndView verification(@RequestParam String code);}

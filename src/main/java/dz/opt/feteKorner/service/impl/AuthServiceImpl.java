@@ -4,10 +4,7 @@ import dz.opt.feteKorner.config.JwtService;
 import dz.opt.feteKorner.dto.AuthFormDTO;
 import dz.opt.feteKorner.dto.JwtResponse;
 import dz.opt.feteKorner.dto.SignUpDTO;
-import dz.opt.feteKorner.exception.AccountNotValidYetException;
-import dz.opt.feteKorner.exception.ExpiredVerificationLinkException;
-import dz.opt.feteKorner.exception.InvalidTokenException;
-import dz.opt.feteKorner.exception.UserExistException;
+import dz.opt.feteKorner.exception.*;
 import dz.opt.feteKorner.model.User;
 import dz.opt.feteKorner.repository.UserRepository;
 import dz.opt.feteKorner.service.intrf.AuthService;
@@ -46,11 +43,11 @@ public class AuthServiceImpl implements AuthService {
     public JwtResponse signIn(AuthFormDTO authFormDTO) {
         User user = userRepository.findById(authFormDTO.getEmail()).
                 orElseThrow(()->new UsernameNotFoundException("Utilisateur inconnu : "+authFormDTO.getEmail()));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authFormDTO.getEmail(), authFormDTO.getPassword()));
         if(!user.isAccountValidated()){
             throw  new AccountNotValidYetException("Vous n'avez pas encore validé votre compte (Lien reçu par email)");
         }
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authFormDTO.getEmail(), authFormDTO.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtService.buildToken(authentication);
         return new JwtResponse(jwt,authFormDTO.getEmail());
@@ -61,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
         userRepository.findById(signUpDTO.getEmail()).ifPresent((user)->{
              throw new UserExistException("Adresse email déja utilisée");
         });
-        String randomCode = RandomString.make(64);
+        String randomCode = RandomString.make(255);
         User newUser = User.builder()
                 .pseudo(signUpDTO.getPseudo())
                 .email(signUpDTO.getEmail())
@@ -70,17 +67,21 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(signUpDTO.getPassword()))
                 .verificationCode(randomCode).build();
         this.userRepository.save(newUser);
-        this.processMail.SendVerificationMail(signUpDTO.getEmail(),randomCode);
+        this.processMail.SendVerificationMail(signUpDTO.getEmail(),randomCode,signUpDTO.getPseudo());
 
     }
 
     @Override
     public void verification(String code) {
-        User user= this.userRepository.findByVerificationCode(code).get(0);
-        if(user==null){
+        List<User> users= this.userRepository.findByVerificationCode(code);
+        if(users.isEmpty()){
             throw new ExpiredVerificationLinkException("Expiration du lien, veuillez reformulez votre inscription");
         }
+        User user= users.get(0);
 
+        if(user.isAccountValidated()) {
+            throw  new AccountAlreadyValidatedException("Compte déja validé");
+        }
         user.setAccountValidated(true);
         userRepository.save(user);
 

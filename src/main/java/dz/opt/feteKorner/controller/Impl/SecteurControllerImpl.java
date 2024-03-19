@@ -21,7 +21,6 @@ public class SecteurControllerImpl implements SecteurController {
 
     private final SecteurService secteurService;
 
-    private final MailSender mailSender;
 
     @Override
     public SecteurDto createSecteur(@Valid SecteurDto secteurDto){
