@@ -54,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void SignUp(SignUpDTO signUpDTO) {
+    public void signUp(SignUpDTO signUpDTO) {
         userRepository.findById(signUpDTO.getEmail()).ifPresent((user)->{
              throw new UserExistException("Adresse email déja utilisée");
         });
