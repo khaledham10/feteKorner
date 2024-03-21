@@ -1,6 +1,7 @@
 package dz.opt.feteKorner.service.impl;
 
 import dz.opt.feteKorner.config.JwtService;
+import dz.opt.feteKorner.cste.AuthErrorCste;
 import dz.opt.feteKorner.dto.AuthFormDTO;
 import dz.opt.feteKorner.dto.JwtResponse;
 import dz.opt.feteKorner.dto.SignUpDTO;
@@ -35,18 +36,16 @@ public class AuthServiceImpl implements AuthService {
     private final ProcessMail processMail;
     private  final UserRepository userRepository;
 
-    private final ModelMapper modelMapper;
-
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public JwtResponse signIn(AuthFormDTO authFormDTO) {
         User user = userRepository.findById(authFormDTO.getEmail()).
-                orElseThrow(()->new UsernameNotFoundException("Utilisateur inconnu : "+authFormDTO.getEmail()));
+                orElseThrow(()->new UsernameNotFoundException(AuthErrorCste.UNKNONW_USER+authFormDTO.getEmail()));
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authFormDTO.getEmail(), authFormDTO.getPassword()));
         if(!user.isAccountValidated()){
-            throw  new AccountNotValidYetException("Vous n'avez pas encore validé votre compte (Lien reçu par email)");
+            throw  new AccountNotValidYetException(AuthErrorCste.ACCOUNT_NOT_YET_VALIDE);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtService.buildToken(authentication);
@@ -54,9 +53,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void signUp(SignUpDTO signUpDTO) {
+    public String signUp(SignUpDTO signUpDTO) {
         userRepository.findById(signUpDTO.getEmail()).ifPresent((user)->{
-             throw new UserExistException("Adresse email déja utilisée");
+             throw new UserExistException(AuthErrorCste.USER_ALREADY_EXIST);
         });
         String randomCode = RandomString.make(255);
         User newUser = User.builder()
@@ -68,6 +67,7 @@ public class AuthServiceImpl implements AuthService {
                 .verificationCode(randomCode).build();
         this.userRepository.save(newUser);
         this.processMail.SendVerificationMail(signUpDTO.getEmail(),randomCode,signUpDTO.getPseudo());
+        return  signUpDTO.getEmail();
 
     }
 
@@ -75,12 +75,12 @@ public class AuthServiceImpl implements AuthService {
     public void verification(String code) {
         List<User> users= this.userRepository.findByVerificationCode(code);
         if(users.isEmpty()){
-            throw new ExpiredVerificationLinkException("Expiration du lien, veuillez reformulez votre inscription");
+            throw new ExpiredVerificationLinkException(AuthErrorCste.VERIFICATION_LINK_EXPIRED);
         }
         User user= users.get(0);
 
         if(user.isAccountValidated()) {
-            throw  new AccountAlreadyValidatedException("Compte déja validé");
+            throw  new AccountAlreadyValidatedException(AuthErrorCste.ACCOUNT_ALREADY_VALIDATED);
         }
         user.setAccountValidated(true);
         userRepository.save(user);

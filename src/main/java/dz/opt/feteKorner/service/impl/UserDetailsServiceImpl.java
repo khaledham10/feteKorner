@@ -1,5 +1,6 @@
 package dz.opt.feteKorner.service.impl;
 
+import dz.opt.feteKorner.cste.AuthErrorCste;
 import dz.opt.feteKorner.model.User;
 import dz.opt.feteKorner.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return  this.userRepository.findById(email).orElseThrow(()->
-              new UsernameNotFoundException("Utilisateur inconnu : "+ email)
+              new UsernameNotFoundException(AuthErrorCste.UNKNONW_USER + email)
         );
     }
 }

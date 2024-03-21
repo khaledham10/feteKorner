@@ -25,9 +25,9 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
-    public void signUp(SignUpDTO signUpDTO) {
+    public ResponseEntity<String> signUp(SignUpDTO signUpDTO) {
         this.authService.signUp(signUpDTO);
-        ResponseEntity.created(null);
+        return new ResponseEntity(signUpDTO.getEmail(), HttpStatus.CREATED);
 
     }
 

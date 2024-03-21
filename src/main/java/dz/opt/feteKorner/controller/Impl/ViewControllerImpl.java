@@ -2,6 +2,7 @@ package dz.opt.feteKorner.controller.Impl;
 
 import dz.opt.feteKorner.controller.api.ViewController;
 import dz.opt.feteKorner.service.impl.AuthServiceImpl;
+import dz.opt.feteKorner.service.intrf.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -13,7 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequiredArgsConstructor
 public class ViewControllerImpl implements ViewController {
 
-    private final AuthServiceImpl authService;
+    private final AuthService authService;
 
 
 

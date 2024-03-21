@@ -1,5 +1,7 @@
 package dz.opt.feteKorner.dto;
 
+import dz.opt.feteKorner.cste.DataInputError;
+import dz.opt.feteKorner.cste.RegEx;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -8,24 +10,25 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Ref;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class SignUpDTO {
-    @NotBlank(message = "Le pseudo ne peut pas être vide")
+    @NotBlank(message = DataInputError.PSEUDO_NOT_BLANK_MESSAGE)
     private String pseudo;
 
-    @NotBlank(message = "L'email ne peut pas être vide")
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Email incorrect")
+    @NotBlank(message = DataInputError.EMAIL_NOT_BLANK_MESSAGE)
+    @Pattern(regexp = RegEx.EMAIL_PATTERN_REGEX, message = DataInputError.EMAIL_PATTERN_MESSAGE)
     private String email;
 
-    @NotBlank(message = "Le mot de passe ne peut pas être vide")
-    @Pattern(regexp = "^(?=[^A-Z]*[A-Z])(?=[^a-z]*[a-z])(?=\\D*\\d).{8,}$",message = "Le mot de passe doit contenir au moins 8 caractères, inclure " +
-            "au moins un chiffre et une lettre majuscule")
+    @NotBlank(message = DataInputError.PASSWORD_NOT_BLANK_MESSAGE)
+    @Pattern(regexp = RegEx.PASSWORD_PATTERN_REGEX,message = DataInputError.PASSWORD_PATTERN_MESSAGE)
     private String password;
 
-    @NotBlank(message = "Le numéro de téléphone ne peut pas être vide")
-    @Pattern(regexp="^[0-9]+$", message="Le numéro de téléphone ne peut contenir que des chiffres")
-    @Size( min = 10,max = 10, message = "Le numéro doit contenir 10 caractères")
+    @NotBlank(message = DataInputError.PHONE_NOT_BLANK_MESSAGE)
+    @Pattern(regexp=RegEx.PHONE_PATTERN_REGEX, message=DataInputError.PHONE_PATTERN_MESSAGE)
+    @Size( min = 10,max = 10, message = DataInputError.PHONE_SIZE_MESSAGE)
     private String phone;}

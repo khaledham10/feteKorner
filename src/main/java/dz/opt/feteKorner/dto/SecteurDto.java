@@ -1,4 +1,5 @@
 package dz.opt.feteKorner.dto;
+import dz.opt.feteKorner.cste.DataInputError;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -8,8 +9,8 @@ import lombok.Data;
 public class SecteurDto {
 
     private int id;
-    @NotBlank(message = "Le libelle est obligatoire")
+    @NotBlank(message = DataInputError.LABEL_NOT_BLANK_MESSAGE)
     private String label;
-    @NotBlank(message = "L'emoji est obligatoire")
+    @NotBlank(message = DataInputError.EMOJI_NOT_BLANK_MESSAGE)
     private String emoji;
 }

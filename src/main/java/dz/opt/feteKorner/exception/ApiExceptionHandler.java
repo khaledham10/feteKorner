@@ -1,6 +1,8 @@
 package dz.opt.feteKorner.exception;
 
 
+import dz.opt.feteKorner.cste.AuthErrorCste;
+import dz.opt.feteKorner.cste.DataInputError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -27,7 +29,7 @@ public class ApiExceptionHandler {
     public ResponseEntity<ApiExceptionDTO> handleArgumentException(MethodArgumentNotValidException e){
         log.error(e.getMessage());
         List<String> errors = e.getBindingResult().getAllErrors().stream().map(error -> error.getDefaultMessage()).toList() ;
-        ApiExceptionDTO apiExceptionDTO = ApiExceptionDTO.builder().message("Les données saisies ne sont pas correctes").
+        ApiExceptionDTO apiExceptionDTO = ApiExceptionDTO.builder().message(DataInputError.BAD_INPUT).
                 httpStatus(HttpStatus.BAD_REQUEST).localDateTime(LocalDateTime.now()).
                 errors(errors).
                 build();
@@ -38,7 +40,7 @@ public class ApiExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiExceptionDTO> userNotFound(BadCredentialsException e){
         log.error(e.getMessage());
-        ApiExceptionDTO apiExceptionDTO = ApiExceptionDTO.builder().message("Email ou Mot de passe incorrect!").
+        ApiExceptionDTO apiExceptionDTO = ApiExceptionDTO.builder().message(AuthErrorCste.BAD_CREDENTIAL).
                 httpStatus(HttpStatus.UNAUTHORIZED).localDateTime(LocalDateTime.now()).
                 errors(List.of()).
                 build();
@@ -72,6 +74,7 @@ public class ApiExceptionHandler {
     public ModelAndView expiredLink(ExpiredVerificationLinkException e){
         var modelAndView = new ModelAndView("linkExpired");
         modelAndView.addObject("loginUrl",this.loginUrl);
+        modelAndView.setStatus(HttpStatus.GONE);
         return modelAndView;
     }
 
@@ -89,9 +92,9 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(AccountAlreadyValidatedException.class)
     public ModelAndView expiredLink(AccountAlreadyValidatedException e){
-
         var modelAndView = new ModelAndView("compteValidated");
         modelAndView.addObject("loginUrl",this.loginUrl);
+        modelAndView.setStatus(HttpStatus.CONFLICT);
         return modelAndView;
     }
 
