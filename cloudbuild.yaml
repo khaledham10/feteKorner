@@ -1,0 +1,5 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', '$_ARTEFACT_REGISTRY/$PROJECT_ID/$_REPOSITORY/$_IMAGE', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '$_ARTEFACT_REGISTRY/$PROJECT_ID/$_REPOSITORY/$_IMAGE']
