@@ -5,7 +5,7 @@ COPY . /app
 RUN mvn clean package
 
 # Étape 2 : Exécution de l'application Spring Boot
-FROM adoptopenjdk:17-jre-hotspot
+FROM  openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/target/feteKorner-0.0.1-SNAPSHOT.jar /app/feteKorner.jar
 EXPOSE 8080
