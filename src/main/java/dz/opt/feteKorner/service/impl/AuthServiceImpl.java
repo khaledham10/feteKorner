@@ -53,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String signUp(SignUpDTO signUpDTO) {
+    public void signUp(SignUpDTO signUpDTO) {
         userRepository.findById(signUpDTO.getEmail()).ifPresent((user)->{
              throw new UserExistException(AuthErrorCste.USER_ALREADY_EXIST);
         });
@@ -65,9 +65,9 @@ public class AuthServiceImpl implements AuthService {
                 .role(Role.CLIENT)
                 .password(passwordEncoder.encode(signUpDTO.getPassword()))
                 .verificationCode(randomCode).build();
-        this.userRepository.save(newUser);
         this.processMail.SendVerificationMail(signUpDTO.getEmail(),randomCode,signUpDTO.getPseudo());
-        return  signUpDTO.getEmail();
+        this.userRepository.save(newUser);
+
 
     }
 

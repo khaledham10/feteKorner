@@ -9,11 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin
 @RequiredArgsConstructor
 public class AuthControllerImpl implements AuthController {
 
@@ -25,9 +27,9 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
-    public ResponseEntity<String> signUp(SignUpDTO signUpDTO) {
+    public ResponseEntity signUp(SignUpDTO signUpDTO) {
         this.authService.signUp(signUpDTO);
-        return new ResponseEntity(signUpDTO.getEmail(), HttpStatus.CREATED);
+        return new ResponseEntity(HttpStatus.CREATED);
 
     }
 

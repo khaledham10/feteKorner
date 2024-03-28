@@ -14,7 +14,7 @@ public interface AuthController {
     ResponseEntity<JwtResponse> login(@Valid @RequestBody AuthFormDTO authFormDTO);
 
     @PostMapping("/signup")
-    ResponseEntity<String> signUp(@Valid @RequestBody SignUpDTO signUpDTO);
+    ResponseEntity signUp(@Valid @RequestBody SignUpDTO signUpDTO);
 
 }
 

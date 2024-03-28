@@ -78,7 +78,7 @@ public class AuthControllerTest  {
 
     @Test
     public void AuthController_SignUp_Success() throws Exception {
-       when(authService.signUp(signUpDTO)).thenReturn(signUpDTO.getEmail());
+        doNothing().when(authService).signUp(signUpDTO);
         mockMvc.perform(post("/auth/signup").contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(signUpDTO))).andExpect(status().isCreated());
 
@@ -190,7 +190,7 @@ public class AuthControllerTest  {
         mockMvc.perform(post("/auth/signin").contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(authFormDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.acces_token", is(jwtResponse.getAccess_token())));
+                .andExpect(jsonPath("$.access_token", is(jwtResponse.getAccess_token())));
 
     }
 

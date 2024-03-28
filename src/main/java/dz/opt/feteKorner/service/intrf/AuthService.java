@@ -8,7 +8,7 @@ public interface AuthService {
 
     JwtResponse signIn(AuthFormDTO authFormDTO);
 
-    String signUp(SignUpDTO signUpDTO);
+    void signUp(SignUpDTO signUpDTO);
 
     void verification(String code);
 }

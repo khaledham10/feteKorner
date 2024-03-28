@@ -41,7 +41,7 @@ public class JwtService {
                 .toList();
         return Jwts
                 .builder()
-                .claim("authorities", authorities.get(0))
+                .claim("authorities", authorities)
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
